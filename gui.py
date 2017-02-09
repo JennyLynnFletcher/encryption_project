@@ -14,7 +14,6 @@ class Main_window():
         self.master.iconbitmap('key-icon2.ico')
         self.encrypt = IntVar()
         self.img_index = 0
-        self.lizard_show = False
         self.lizard = IntVar()
         
         main_frame = Frame(self.master)
@@ -51,7 +50,7 @@ class Main_window():
         self.radio_encrypt = Radiobutton(main_frame)
         self.radio_encrypt.config(fg = "black", variable = self.encrypt, value = 1)
         self.radio_encrypt.grid(row = 2, column = 0, sticky = 'w')
-        self.radio_encrypt.deselect()
+        self.radio_encrypt.select()
 
         lbl_radio_encrypt = Label(main_frame)
         lbl_radio_encrypt.config(text = "Encrypt",font=("Courier", 13), fg = "white smoke")
@@ -104,7 +103,7 @@ class Main_window():
         self.txt_box_from_machine.grid(row = 4, column = 6, sticky = 'w')
 
         self.btn_rave = Button(main_frame)
-        self.btn_rave.config(text = "Rave!",fg = "#%06x" % random.randint(0, 0xFFFFFF), font = ("Comic Sans MS bold", 12),activeforeground = "white", activebackground= "#%06x" % random.randint(0, 0xFFFFFF), width = 10, height = 2)
+        self.btn_rave.config(text = "!!!!",fg = "#%06x" % random.randint(0, 0xFFFFFF), font = ("Comic Sans MS bold", 12),activeforeground = "white", activebackground= "#%06x" % random.randint(0, 0xFFFFFF), width = 10, height = 2)
         self.btn_rave.grid(row = 5, column = 2, columnspan = 2, sticky ='e', padx = 35, pady = 10)
         self.btn_rave.bind("<Button-1>",self.rave)
 
@@ -117,6 +116,7 @@ class Main_window():
         
 
     def animate_gif(self,master):
+        if self.lizard == 1:
             try:
                 self.img_gif = PhotoImage(file = "lizard.gif", format = "gif -index {}".format(self.img_index))
                 self.img_lbl.config(image = self.img_gif)
@@ -124,7 +124,7 @@ class Main_window():
                 self.img_index +=1
             except:
                 self.img_index = 0
-            master.after(10,self.animate_gif, master)
+        master.after(5,self.animate_gif, master)
 
     def rave(self,event):        
         self.btn_rave.config(activebackground= "#%06x" % random.randint(0, 0xFFFFFF), fg = "#%06x" % random.randint(0, 0xFFFFFF))               
@@ -138,7 +138,7 @@ class Main_window():
         self.txt_box_decrypt.delete("1.0","end")
         self.txt_box_to_machine.delete("0","end")
         self.txt_box_from_machine.delete("0","end")
-        self.encrypt.get()
+        print(self.encrypt.get())
         
     def get_new_name(self,event):
         txt_box_get = self.txt_box_generate_machine.get()
