@@ -39,7 +39,7 @@ class Machine():
         asciivalues = [ord(text[i]) for i in range(0,len(text))]
         for i in range(0,len(asciivalues)):
             x = i + self.encryption_key_1
-            offset = x + (encryption_key_2*i)        
+            offset = x + (self.encryption_key_2*i)        
             ciphertext[i] = asciivalues[i] + (offset*encrypt_decrypt)
             while ciphertext[i] > 126:
                 ciphertext[i] = ciphertext[i] - 94
