@@ -46,4 +46,4 @@ class Machine():
             while ciphertext[i] < 32:
                 ciphertext[i] = ciphertext[i] + 94
             ciphertext[i] = str(chr(ciphertext[i]))
-        return ciphertext
+        return "".join(ciphertext)
