@@ -1,6 +1,8 @@
 from tkinter import *
-import main as m
 import random
+import machine_class as mc
+
+machine_list = {}
 
 class Main_window():
     def __init__(self,master):
@@ -11,15 +13,19 @@ class Main_window():
         self.master.option_add("*background","slate gray")
         self.master.geometry("625x450+100+100")
         self.master.resizable(width=False, height=True)
-        self.master.iconbitmap('key-icon2.ico')
+        self.master.iconbitmap("key-icon2.ico")
         self.encrypt = IntVar()
         self.img_index = 0
         self.lizard = IntVar()
+        self.plaintext = ""
+        self.ciphertext = ""
+        self.machine_1 = ""
+        self.machine_2 = ""
+        self.encrypt_decrypt = 0
+        self.txt_box_get = ""
         
         main_frame = Frame(self.master)
         main_frame.grid()
-        gif_frame = Frame(self.master)
-        gif_frame.grid()
         
         lbl_encrypt = Label(main_frame)
         lbl_encrypt.config(text = "Encrypt",font=("Courier", 18), fg = "white smoke")
@@ -61,7 +67,7 @@ class Main_window():
         lbl_new_machine.grid(row = 2, column=3, columnspan = 2, sticky = 'n')
 
         self.radio_decrypt = Radiobutton(main_frame)
-        self.radio_decrypt.config(fg = "black", variable = self.encrypt, value = 0)
+        self.radio_decrypt.config(fg = "black", variable = self.encrypt, value = -1)
         self.radio_decrypt.grid(row = 2, column = 6, sticky = 'e')
         self.radio_decrypt.deselect()
 
@@ -108,7 +114,7 @@ class Main_window():
         self.btn_rave.bind("<Button-1>",self.rave)
 
         self.img_gif = PhotoImage(file = "lizard.gif", format = "gif -index 0")
-        self.img_lbl = Label(gif_frame)
+        self.img_lbl = Label(main_frame)
         self.img_lbl.config(image = self.img_gif)
 
     def release_lizard(self,event):
@@ -120,7 +126,7 @@ class Main_window():
             try:
                 self.img_gif = PhotoImage(file = "lizard.gif", format = "gif -index {}".format(self.img_index))
                 self.img_lbl.config(image = self.img_gif)
-                self.img_lbl.grid(row = 0, column = 0, sticky ='s')
+                self.img_lbl.grid(row = 6, column = 2, columnspan = 2, sticky ='s')
                 self.img_index +=1
             except:
                 self.img_index = 0
@@ -130,25 +136,64 @@ class Main_window():
         self.btn_rave.config(activebackground= "#%06x" % random.randint(0, 0xFFFFFF), fg = "#%06x" % random.randint(0, 0xFFFFFF))               
                               
     def enter_button(self,event):
-        plaintext = self.txt_box_encrypt.get("1.0","end-1c")
-        ciphertext = self.txt_box_decrypt.get("1.0","end-1c")
-        machine_1 = self.txt_box_to_machine.get()
-        machine_2 = self.txt_box_from_machine.get()
+        self.plaintext = self.txt_box_encrypt.get("1.0","end-1c")
+        self.ciphertext = self.txt_box_decrypt.get("1.0","end-1c")
+        self.machine_1 = self.txt_box_to_machine.get()
+        self.machine_2 = self.txt_box_from_machine.get()
+        self.encrypt_decrypt = self.encrypt.get()
         self.txt_box_encrypt.delete("1.0","end")
         self.txt_box_decrypt.delete("1.0","end")
         self.txt_box_to_machine.delete("0","end")
         self.txt_box_from_machine.delete("0","end")
-        print(self.encrypt.get())
-        
+        if check_input(self.plaintext,self.ciphertext,self.machine_1,self.machine_2,self.encrypt_decrypt,self) == True:
+            if check_machine(self,self.machine_1) == True and check_machine(self,self.machine_2) == True:
+                machine_list[self.machine_1].calculate_key(machine_list[self.machine_2])
+                machine_list[self.machine_2].calculate_key(machine_list[self.machine_1])
+                if self.encrypt_decrypt == 1:
+                    self.txt_box_decrypt.insert(0.0,machine_list[self.machine_1].encrypt_text(self.plaintext,self.encrypt_decrypt))
+                elif self.encrypt_decrypt == -1:
+                    self.txt_box_encrypt.insert(0.0,machine_list[self.machine_1].encrypt_text(self.ciphertext,self.encrypt_decrypt))
+            
     def get_new_name(self,event):
-        txt_box_get = self.txt_box_generate_machine.get()
+        self.txt_box_get = self.txt_box_generate_machine.get()
         self.txt_box_generate_machine.delete("0","end")
-        print(m.generate_machine(txt_box_get).return_public_key())   
+        print(generate_machine(self.txt_box_get).return_public_key())
         
+    def return_new_name(self):
+        return self.txt_box_get
 
-def main():
+    def no_input_error(self):
+        self.txt_box_encrypt.insert(0.0,"Please enter text to Encrypt/Decrypt and two valid machines")
+
+    def invalid_machine_error(self):
+        self.txt_box_encrypt.insert(0.0,"Invalid machine ")
+
+def check_input(plaintext, ciphertext, machine_1, machine_2, encrypt_decrypt,self):
+    if (plaintext == "" or ciphertext == "" or machine_1 == "" and encrypt_decrypt == 1) or (plaintext == "" or ciphertext == "" or machine_2 == "" and encrypt_decrypt == -1):
+        self.no_input_error()
+        return False
+    else:
+        return True
+    
+def check_machine(self,machine_name):
+    try:
+        machine_list[machine_name].return_name()
+        return True
+    except:
+        self.invalid_machine_error()
+        return False
+
+def generate_machine(name):
+    machine_list[name] = mc.Machine(name)
+    print(machine_list)
+    return machine_list[name]
+
+def start():
     root = Tk()
     encryption_app = Main_window(root)
     encryption_app.animate_gif(root)
     root.mainloop()
-main()
+
+if __name__== '__main__':
+    start()
+    
