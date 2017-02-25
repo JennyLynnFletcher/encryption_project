@@ -157,7 +157,7 @@ class Main_window():
     def get_new_name(self,event):
         self.txt_box_get = self.txt_box_generate_machine.get()
         self.txt_box_generate_machine.delete("0","end")
-        print(generate_machine(self.txt_box_get).return_public_key())
+        generate_machine(self.txt_box_get)
         
     def return_new_name(self):
         return self.txt_box_get
@@ -169,7 +169,7 @@ class Main_window():
         self.txt_box_encrypt.insert(0.0,"Invalid machine ")
 
 def check_input(plaintext, ciphertext, machine_1, machine_2, encrypt_decrypt,self):
-    if (plaintext == "" or ciphertext == "" or machine_1 == "" and encrypt_decrypt == 1) or (plaintext == "" or ciphertext == "" or machine_2 == "" and encrypt_decrypt == -1):
+    if (plaintext == "" or machine_1 == "" or machine_2 == "" and encrypt_decrypt == 1) or (ciphertext == "" or machine_1 == "" or machine_2 == "" and encrypt_decrypt == -1):
         self.no_input_error()
         return False
     else:
@@ -185,7 +185,6 @@ def check_machine(self,machine_name):
 
 def generate_machine(name):
     machine_list[name] = mc.Machine(name)
-    print(machine_list)
     return machine_list[name]
 
 def start():
