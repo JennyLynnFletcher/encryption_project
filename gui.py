@@ -1,6 +1,7 @@
 from tkinter import *
 import random
 import machine_class as mc
+import list_window as lw
 
 machine_list = {}
 
@@ -36,7 +37,7 @@ class Main_window():
         lbl_decrypt.grid(row=0, column=4, columnspan = 3, sticky = 'e', padx = 10)
 
         self.txt_box_encrypt = Text(main_frame)
-        self.txt_box_encrypt.config( width = 20, height = 15, bg = "light slate gray", fg = "mint cream")
+        self.txt_box_encrypt.config( width = 20, height = 15, bg = "light slate gray", fg = "mint cream", wrap = "word")
         self.txt_box_encrypt.grid(row = 1, column = 0, columnspan = 2, sticky = 'w', padx = 10)
 
         btn_enter = Button(main_frame)
@@ -44,13 +45,18 @@ class Main_window():
         btn_enter.grid(row = 1, column = 3, columnspan = 2, sticky = 'n', padx = 5)
         btn_enter.bind("<Button-1>",self.enter_button)
 
+        btn_list = Button(main_frame)
+        btn_list.config(text = "List Machines", borderwidth = 2,fg = "white smoke", height = 2)
+        btn_list.grid(row = 1, column = 3, columnspan = 2, padx = 5)
+        btn_list.bind("<Button-1>",self.new_window)
+
         btn_lizard = Button(main_frame)
         btn_lizard.config(text = "Lizard?", borderwidth = 2,fg = "white smoke", height = 2)
         btn_lizard.grid(row = 1, column = 3, columnspan = 2, sticky = 's', padx = 5)
         btn_lizard.bind("<Button-1>",self.release_lizard)
 
         self.txt_box_decrypt = Text(main_frame)
-        self.txt_box_decrypt.config( width = 20, height = 15, bg = "light slate gray", fg = "mint cream")
+        self.txt_box_decrypt.config( width = 20, height = 15, bg = "light slate gray", fg = "mint cream", wrap = "word")
         self.txt_box_decrypt.grid(row = 1, column = 5, columnspan = 2, sticky = 'e', padx = 10)
 
         self.radio_encrypt = Radiobutton(main_frame)
@@ -117,9 +123,13 @@ class Main_window():
         self.img_lbl = Label(main_frame)
         self.img_lbl.config(image = self.img_gif)
 
+    def new_window(self,event):
+        root = Tk()
+        list_app = lw.Sub_window(root)
+        root.mainloop()
+
     def release_lizard(self,event):
-        self.lizard = 1   
-        
+        self.lizard = 1           
 
     def animate_gif(self,master):
         if self.lizard == 1:
@@ -157,19 +167,29 @@ class Main_window():
     def get_new_name(self,event):
         self.txt_box_get = self.txt_box_generate_machine.get()
         self.txt_box_generate_machine.delete("0","end")
-        generate_machine(self.txt_box_get)
+        if self.txt_box_get != "":
+            try:
+                machine_list[self.txt_box_get].return_name()
+                self.no_name_error()
+            except:
+                generate_machine(self.txt_box_get)
+        else:
+            self.no_name_error()
+        
+    def no_name_error(self):
+        self.txt_box_encrypt.insert(0.0,"Please enter a valid machine name ")
         
     def return_new_name(self):
         return self.txt_box_get
 
     def no_input_error(self):
-        self.txt_box_encrypt.insert(0.0,"Please enter text to Encrypt/Decrypt and two valid machines")
+        self.txt_box_encrypt.insert(0.0,"Please enter text to Encrypt/Decrypt and two valid machines ")
 
     def invalid_machine_error(self):
         self.txt_box_encrypt.insert(0.0,"Invalid machine ")
 
 def check_input(plaintext, ciphertext, machine_1, machine_2, encrypt_decrypt,self):
-    if (plaintext == "" or machine_1 == "" or machine_2 == "" and encrypt_decrypt == 1) or (ciphertext == "" or machine_1 == "" or machine_2 == "" and encrypt_decrypt == -1):
+    if (encrypt_decrypt == 1 and plaintext == "" or machine_1 == "" or machine_2 == "") or (encrypt_decrypt == -1 and ciphertext == "" or machine_1 == "" or machine_2 == ""):
         self.no_input_error()
         return False
     else:
