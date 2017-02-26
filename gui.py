@@ -125,8 +125,8 @@ class Main_window():
 
     def new_window(self,event):
         root = Tk()
-        list_app = lw.Sub_window(root)
-        root.mainloop()
+        list_app = lw.Sub_window(root,machine_list)
+        root.mainloop()        
 
     def release_lizard(self,event):
         self.lizard = 1           
