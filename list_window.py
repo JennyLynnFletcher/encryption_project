@@ -28,7 +28,6 @@ class Sub_window():
         self.txt_box_list['yscrollcommand'] = self.scroll_bar_list.set
 
         self.name_list = list(self.machine_list.keys())
-        print (self.name_list)
 
         for i in range(len(self.machine_list)):
             print(self.name_list[i])
