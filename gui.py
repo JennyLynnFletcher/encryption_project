@@ -122,7 +122,7 @@ class Main_window():
         self.img_gif = PhotoImage(file = "lizard.gif", format = "gif -index 0")
         self.img_lbl = Label(main_frame)
         self.img_lbl.config(image = self.img_gif)
-
+        
     def new_window(self,event):
         root = Tk()
         list_app = lw.Sub_window(root,machine_list)
@@ -168,10 +168,9 @@ class Main_window():
         self.txt_box_get = self.txt_box_generate_machine.get()
         self.txt_box_generate_machine.delete("0","end")
         if self.txt_box_get != "":
-            try:
-                machine_list[self.txt_box_get].return_name()
+            if self.txt_box_get in machine_list.keys():
                 self.no_name_error()
-            except:
+            else:
                 generate_machine(self.txt_box_get)
         else:
             self.no_name_error()
@@ -196,10 +195,9 @@ def check_input(plaintext, ciphertext, machine_1, machine_2, encrypt_decrypt,sel
         return True
     
 def check_machine(self,machine_name):
-    try:
-        machine_list[machine_name].return_name()
+    if machine_name in machine_list.keys():
         return True
-    except:
+    else:
         self.invalid_machine_error()
         return False
 
@@ -214,5 +212,4 @@ def start():
     root.mainloop()
 
 if __name__== '__main__':
-    start()
-    
+    start()  
